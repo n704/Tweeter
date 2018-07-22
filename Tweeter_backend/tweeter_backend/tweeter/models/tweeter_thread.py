@@ -34,6 +34,9 @@ class TweeterThreadManager(models.Manager):
         if len(messages) == 0:
             errors.append("There are no messages")
             is_valid = False
+        if any(filter( lambda x: len(x) >= 50, messages)):
+            errors.append("Message is larger than 50 charaters")
+            is_valid = False
         return is_valid, errors
 
     def create_thread(self, short_message, messages):

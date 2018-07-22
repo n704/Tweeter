@@ -91,6 +91,14 @@ class TestTweeterThread(TestCase):
             ValiationError,
             lambda: TweeterThread.objects.create_thread(short_message, messages))
 
+    def test_messages_greater_than_limit(self):
+        """ Test thread creation when messages are greater than limit 50"""
+        messages = ["1" * 51]
+        short_message = "1"
+        self.assertRaises(
+            ValiationError,
+            lambda: TweeterThread.objects.create_thread(short_message, messages))
+
     def test_create_success(self):
         """ Test thread creation when validation passes."""
         messages = ["I am a wolf"]
