@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import URL from '../../urls';
 
 /**
@@ -11,44 +14,48 @@ class Thread extends Component {
     super(props);
     this.state = {
       items: [],
-      id: props.thread_id
-    }
+      id: props.thread_id,
+    };
   }
+
   /**
    * make APi call to get all data from the server.
    * @return {[type]} [description]
    */
   componentWillMount() {
-    axios.get(URL.threads(this.state.id),{})
-      .then(res => {
-        const jsonData = res.data
+    const { id } = this.state;
+    axios.get(URL.threads(id), {})
+      .then((res) => {
+        const jsonData = res.data;
         this.setState({
           items: jsonData.items,
-        })
+        });
       })
-      .catch(err => {
+      .catch(() => {
         this.setState({
-          items: []
-        })
-      })
+          items: [],
+        });
+      });
   }
+
   render() {
+    const { items } = this.state;
     return (
-      <div>
-        {this.state.items.map(elem => {
+      <List>
+        {items.map((elem) => {
           return (
-            <div key={elem.pk}>
-              {elem.message}
-            </div>
-          )
+            <ListItem key={elem.pk}>
+              <ListItemText inset primary={elem.message} />
+            </ListItem>
+          );
         })}
-      </div>
-    )
+      </List>
+    );
   }
 }
 
 Thread.propTypes = {
   thread_id: PropTypes.number.isRequired,
-}
+};
 
 export default Thread;

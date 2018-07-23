@@ -30,10 +30,11 @@ class TweeterMessage {
    */
   _getPrefixLength(length) {
     if (length < 450) {
-      return 4
+      return 4;
     } else if (length < 900) {
-      return 6
+      return 6;
     }
+    return 4;
   }
 
   /**
@@ -50,12 +51,12 @@ class TweeterMessage {
    */
   splitMessage() {
     if (this.message.length < 50) {
-      return [this.message]
+      return [this.message];
     }
-    let words = this.message.split(' ').filter(elem => elem.length)
-    let preFixLength = this._getPrefixLength(this.message.length)
-    let noOfParts = Math.ceil(this.message.length / (50 - preFixLength))
-    return this._splitMessages(words, noOfParts)
+    const words = this.message.split(' ').filter(elem => elem.length);
+    const preFixLength = this._getPrefixLength(this.message.length);
+    const noOfParts = Math.ceil(this.message.length / (50 - preFixLength));
+    return this._splitMessages(words, noOfParts);
   }
 
   /**
@@ -68,39 +69,42 @@ class TweeterMessage {
    * @return {[Array(String)]}    Return tweet in format {index}/{noOfParts} Message
    */
   _splitMessages(words, noOfParts) {
-    let messages = []
-    let counter = 0
-    let string, tmp, i;
-    //looping through the words and creating the message.
-    for( i =0 ; counter < words.length ; i++) {
-      string = `${i+1}/${noOfParts}`
-      while( counter < words.length) {
-        tmp = string + " " + words[counter]
-        if (tmp.length < 50 ) {
-          string = tmp
-          counter++
+    const messages = [];
+    let counter = 0;
+    let string;
+    let tmp;
+    let i;
+    // looping through the words and creating the message.
+    for (i = 0; counter < words.length; i += 1) {
+      string = `${i + 1}/${noOfParts}`;
+      while (counter < words.length) {
+        tmp = `${string} ${words[counter]}`;
+        if (tmp.length < 50) {
+          string = tmp;
+          counter += 1;
         } else {
           break;
         }
       }
-      messages.push(string)
+      messages.push(string);
     }
     // if no of messages is not equal to noOfParts (Our assumption.)
     if (i !== noOfParts) {
-      let newNoOfParts = i;
+      const newNoOfParts = i;
       // checking that prefix length is same or not
       if (i.toString().length === noOfParts.toString().length) {
         // prefix length is same then search and replace with newNoOfParts
-        return messages.map((message, i) => {
-          return message.replace(`${i+1}/${noOfParts} `, `${i+1}/${newNoOfParts} `)
+        return messages.map((message, index) => {
+          return message.replace(`${index + 1}/${noOfParts} `, `${index + 1}/${newNoOfParts} `)
         })
       } else {
         // if prefix do not match Recursive do with newNoOfParts
-        return this._splitMessages(words, newNoOfParts)
+        return this._splitMessages(words, newNoOfParts);
       }
     }
-    return messages
+    return messages;
   }
+
   /**
    * Check message passed is valid or not. if not reason is given as well
    *
@@ -116,19 +120,19 @@ class TweeterMessage {
     let message = this.message;
     // checking message is less 50 characters
     if (message.length < this.tweetLength) {
-      return [true, ""];
+      return [true, ''];
     } else if (message.length >= this.messageMaxLength) { // Upper characters limit
       return [false, `Message is larger than ${this.messageMaxLength} characters`];
     }
 
-    let preFixLength = this._getPrefixLength(this.message.length)
+    const preFixLength = this._getPrefixLength(this.message.length);
 
-    let isWordLarge = this.message.split(' ').filter(elem => elem.length >= (this.tweetLength-preFixLength))
+    const isWordLarge = this.message.split(' ').filter(elem => elem.length >= (this.tweetLength - preFixLength));
     // checking all words are under character limit.
     if (isWordLarge.length) {
-      return [false, "Words are too large to split"]
+      return [false, 'Words are too large to split'];
     }
-    return [true, ""]
+    return [true, ''];
   }
 }
 

@@ -1,24 +1,39 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import URL from '../../urls';
-import TweeterMessage from '../../lib/TweeterMessage'
+import TweeterMessage from '../../lib/TweeterMessage';
 
+const styles = theme => ({
+  button: {
+    margin: theme.spacing.unit,
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 200,
+  },
+});
 
 /**
  * Create a new tweet message to store
  */
 class CreateMessage extends Component {
   constructor(props) {
-     super();
-     this.state = {
-       message: '',
-       errors: "",
-     }
-     this.handleChange = this.handleChange.bind(this)
-     this.handleSubmit = this.handleSubmit.bind(this)
-     this._getMessages = this._getMessages.bind(this)
-     this._getShortMessage = this._getShortMessage.bind(this)
+    super(props);
+    this.state = {
+      message: '',
+      errors: '',
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this._getMessages = this._getMessages.bind(this);
+    this._getShortMessage = this._getShortMessage.bind(this);
   }
 
   /**
@@ -27,7 +42,7 @@ class CreateMessage extends Component {
    */
   handleChange(e) {
     const message = e.target.value;
-    this.setState({ message , errors: ""})
+    this.setState({ message, errors: '' });
   }
 
   /**
@@ -35,12 +50,11 @@ class CreateMessage extends Component {
    * @return {[String]} short string is generated
    */
   _getShortMessage() {
-    let { message } = this.state;
+    const { message } = this.state;
     if (message.length <= 20) {
       return message;
-    } else {
-      return message.slice(0,17) + "..."
     }
+    return `${message.slice(0,17)}...`;
   }
 
   /**
@@ -50,14 +64,15 @@ class CreateMessage extends Component {
    * @return {[String, Array(String)]} Short Snippet and Messages are returned.
    */
   _getMessages() {
-    let shortMessage = this._getShortMessage()
-    const tweeterMessage = new TweeterMessage(this.state.message)
-    let [isValid, reason] = tweeterMessage.isValid()
+    const shortMessage = this._getShortMessage();
+    const { message } = this.state;
+    const tweeterMessage = new TweeterMessage(message);
+    const [isValid, reason] = tweeterMessage.isValid();
     if (isValid) {
-      const messages = tweeterMessage.splitMessage()
-      return [shortMessage, messages]
+      const messages = tweeterMessage.splitMessage();
+      return [shortMessage, messages];
     }
-    throw new Error(reason)
+    throw new Error(reason);
   }
 
   /**
@@ -65,22 +80,18 @@ class CreateMessage extends Component {
    *
    * Does a post API call to save the message.
    */
-  handleSubmit(){
-    let shortMessage, messages;
+  handleSubmit() {
+    let shortMessage;
+    let messages;
+    const { onSave } = this.props;
     try {
       [shortMessage, messages] = this._getMessages()
-    } catch(err) {
-      console.log(err, "Error")
-      this.setState({ errors: err.message})
+    } catch (err) {
+      this.setState({ errors: err.message });
     }
-    console.log(shortMessage, messages)
-    axios.post(URL.messages, { messages,short_messaage: shortMessage})
-      .then( res => {
-        this.setState({ message: '', errors: ""}, this.props.onSave)
-      })
-      .catch(err => {
-        this.setState({ errors: err.message})
-      })
+    axios.post(URL.messages, { messages,short_message: shortMessage })
+      .then(() => this.setState({ message: '', errors: '' }, onSave))
+      .catch(err => this.setState({ errors: err.message }));
   }
 
   /**
@@ -89,18 +100,37 @@ class CreateMessage extends Component {
    *
    */
   render() {
+    const { errors, message } = this.state;
+    const { classes } = this.props;
     return (
-      <div>
-        <input type="text" value={this.state.message} onChange={this.handleChange}/>
-        <button onClick={this.handleSubmit}>Submit</button>
-        {this.state.errors.length ? <p>{this.state.errors}</p>: null}
-      </div>
-    )
+      <Paper elevation={1}>
+        <TextField
+          fullWidth
+          label="Tweeter Message"
+          value={message}
+          className={classes.textField}
+          onChange={this.handleChange}
+          margin="normal"
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.button}
+          onClick={this.handleSubmit}
+        >
+            Submit
+        </Button>
+        {errors.length ? (
+          <Typography component="p">
+            {errors}
+          </Typography>) : null}
+      </Paper>
+    );
   }
 }
 
 CreateMessage.propTypes = {
-    onSave: PropTypes.func.isRequired, // Execute on Save
+  onSave: PropTypes.func.isRequired, // Execute on Save
+  classes: PropTypes.object.isRequired, // Classname and css style
 };
-
-export default CreateMessage
+export default withStyles(styles)(CreateMessage);

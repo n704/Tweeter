@@ -12,44 +12,45 @@ import MessageItem from './MessageItem';
  */
 export default class MessagesDashBoard extends Component {
   constructor(props) {
-     super();
-     this.state = {
-       items: [],
-     }
-     this.getData = this.getData.bind(this);
+    super(props);
+    this.state = {
+      items: [],
+    };
+    this.getData = this.getData.bind(this);
   }
+
   componentWillMount() {
-    this.getData()
+    this.getData();
   }
+
   /**
    * GetData from the server on update and mounting.
    * @return {[type]} [description]
    */
   getData() {
     axios.get(URL.messages, {})
-      .then( res => {
-        const jsonData = res.data
+      .then((res) => {
+        const jsonData = res.data;
         this.setState({
           items: jsonData.items,
-        })
+        });
       })
-      .catch( err => {
+      .catch(() => {
         this.setState({
-          items: []
-        })
-      })
+          items: [],
+        });
+      });
   }
 
   render() {
+    const { items } = this.state;
     return (
       <div>
-        <CreateMessage onSave={this.getData}/>
-        {this.state.items.map(elem => {
-          return (
-            <MessageItem key={elem.pk} message={elem.short_message} id={elem.pk} />
-          )
-        })}
+        <CreateMessage onSave={this.getData} />
+        {
+          items.map((elem) => <MessageItem key={elem.pk} message={elem.short_message} id={elem.pk} />)
+        }
       </div>
-    )
+    );
   }
 }
