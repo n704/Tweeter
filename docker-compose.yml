@@ -3,14 +3,12 @@ services:
   tweeter_backend:
     container_name: tweeter_backend
     build: ./Tweeter_backend
-    network_mode: "host"
     expose:
       - "8000"
     ports:
       - "8000:8000"
     command: python ./manage.py runserver 0:8000
   tweeter_frontend:
-    network_mode: "host"
     container_name: tweeter_frontend
     build: ./Tweeter_frontend
     expose:

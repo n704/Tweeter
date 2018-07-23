@@ -7,4 +7,5 @@ RUN pip install -U pip
 RUN pip install -r /Tweeter_backend/requirements.txt
 # Set Working directory for Docker
 WORKDIR /Tweeter_backend/tweeter_backend
+RUN python ./manage.py test
 RUN python ./manage.py migrate

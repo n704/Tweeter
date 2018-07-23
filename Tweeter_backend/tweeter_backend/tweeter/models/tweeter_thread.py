@@ -87,6 +87,11 @@ class TweeterThread(models.Model):
 
     objects = TweeterThreadManager()
 
+    class Meta:
+        """Order the thread by creation order."""
+
+        ordering = ['-pk']
+
     @property
     def as_json(self):
         """Json response."""

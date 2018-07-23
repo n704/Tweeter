@@ -48,7 +48,14 @@ export default class MessagesDashBoard extends Component {
       <div>
         <CreateMessage onSave={this.getData} />
         {
-          items.map((elem) => <MessageItem key={elem.pk} message={elem.short_message} id={elem.pk} />)
+          items.length ?
+            items.map((elem) => (
+              <MessageItem
+                key={elem.pk}
+                message={elem.short_message}
+                id={elem.pk}
+              />)) :
+            null
         }
       </div>
     );
