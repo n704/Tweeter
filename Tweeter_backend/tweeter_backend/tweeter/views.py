@@ -16,6 +16,18 @@ class Threads(View):
     def post(self, request):
         """
         Post request take input json and return message thread.
+
+        eg:
+        input data
+        {
+            "short_message": "hello",
+            "messages": [
+                "hello world"
+            ]
+        }
+        output : {
+            "data": "Successfully created"
+        }
         """
         json_data = json.loads(request.body)
         short_message = json_data.get("short_message", "")
@@ -31,7 +43,21 @@ class Threads(View):
         })
 
     def get(self, request):
-        """ GET all the threads."""
+        """
+        GET all the threads.
+
+        Returns all the threads stored in DB.
+
+        sample output:
+        {
+            "items": [
+                {
+                    "pk": 1,
+                    "short_message": "hello world"
+                }
+            ]
+        }
+        """
         threads = TweeterThread.objects.all()
         return JsonResponse({
             "items": [thread.as_json for thread in threads]
@@ -44,6 +70,20 @@ class ChainMessages(View):
     def get(self, request, pk):
         """
         GET request to give all messages in pk thread
+
+        sample output Successfully:
+        {
+            "items" : [
+                {
+                    "pk": 1,
+                    "message": "hello world"
+                }
+            ]
+        }
+        sample output if thread is not found
+        {
+            "error": "Invalid thread Id"
+        }
         """
         try:
             messages = TweeterThread.objects.get_all_messages(pk)
