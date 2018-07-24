@@ -27,3 +27,9 @@ npm test
 ```
 
 Test runs Tweet Splitting run possible scenario.
+
+## Running
+
+```
+npm start
+```

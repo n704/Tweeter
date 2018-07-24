@@ -7,6 +7,14 @@ API required for tweeter.
 1. `TweeterMessage`: Each message in Tweeter.
 2. `TweeterThread`: thread were all message are stored under.
 
+## Test
+
+``` python ./manage.py test ```
+
+
+## Running
+
+``` python ./manage.py runserver 0:8000 ```
 
 ## API
 
